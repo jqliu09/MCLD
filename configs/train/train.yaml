@@ -1,0 +1,79 @@
+data:
+  train_bs: 8
+  val_bs: 8
+  num_processes: 2
+  train_width: 512
+  train_height: 512
+  meta_paths:
+    - "./data/fashion_meta.json"
+  texture_clip_condition: False
+  texture_unet_condition: True
+  root_dir: "fashion/fashion/"
+  pose_type: 'densepose'
+  clip_type: 'whole_body'
+  use_face_emb: True
+  
+
+solver:
+  gradient_accumulation_steps: 1
+  mixed_precision: 'fp16'
+  enable_xformers_memory_efficient_attention: False
+  gradient_checkpointing: False
+  max_train_steps: 60000
+  max_grad_norm: 1.0
+  # lr
+  learning_rate: 1.0e-5
+  scale_lr: False
+  lr_warmup_steps: 1
+  lr_scheduler: 'constant'
+
+  # optimizer
+  use_8bit_adam: False
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_weight_decay:  1.0e-2
+  adam_epsilon: 1.0e-8
+
+val:
+  validation_steps: 1000
+
+noise_scheduler_kwargs:
+  num_train_timesteps: 1000
+  beta_start:          0.00085
+  beta_end:            0.012
+  beta_schedule:       "scaled_linear"
+  steps_offset:        1
+  clip_sample:         false
+
+base_model_path: '../animateAnyone/pretrained_weights/sd-image-variations-diffusers'
+vae_model_path: '../animateAnyone/pretrained_weights/sd-vae-ft-mse'
+image_encoder_path: '../animateAnyone/pretrained_weights/sd-image-variations-diffusers/image_encoder'
+controlnet_openpose_path: '../animateAnyone/pretrained_weights/control_v11p_sd15_seg/diffusion_pytorch_model.bin'
+
+# here for validation
+pretrained_base_model_path: "../animateAnyone/pretrained_weights/stable-diffusion-v1-5/"
+pretrained_vae_path: "../animateAnyone/pretrained_weights/sd-vae-ft-mse"
+# validation_resume_dir: "/mhug/MHUGTmp/jliu/exp_output/thuman_stage1_multi_scale_4"
+validation_resume_dir: "./exp_output/deepfashion_stage1"
+denoising_unet_path: "./exp_output/thuman_stage1_multi_scale_4/denoising_unet-52000.pth"
+reference_unet_path: "./exp_output/thuman_stage1_multi_scale_4/reference_unet-52000.pth"
+pose_guider_path: "./exp_output/thuman_stage1_multi_scale_4/pose_guider-52000.pth"
+inference_config: "./configs/inference/inference_v3.yaml"
+
+
+weight_dtype: 'fp16'  # [fp16, fp32]
+uncond_ratio: 0.1
+noise_offset: 0.05
+snr_gamma: 5.0
+enable_zero_snr: True
+pose_guider_pretrain: True
+device: cuda
+
+seed: 12580
+resume_from_checkpoint: ''
+checkpointing_steps: 2000
+save_model_epoch_interval: 1
+exp_name: 'deepfashion_stage1_ip_double_clip1026_diff_mask_loss'
+output_dir: '/gpfs/scratch/ehpc146/jacky/mcld/exp_output'
+cond_chan: 3
+no_save: False
