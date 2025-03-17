@@ -5,3 +5,5 @@ metadata/
 exp_output/
 __pycache__/
 .idea/
+dataset/
+*.pkl
