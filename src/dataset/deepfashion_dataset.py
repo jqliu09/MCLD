@@ -45,15 +45,16 @@ class DeepFashion(Dataset):
         # root_dir = os.path.join(root_dir, "DeepFashion")
         data_dir = root_dir
         
-        self.densepose_dir = os.environ['DATASET_DIR'] + 'deepfashion/'
         self.double_clip = double_clip
         
         if if_train:
             pair_name = './deepfashion_utils/train.csv'
             self.img_dir = data_dir + 'train/'
+            self.pose_path = data_dir + 'train_densepose/'
         else:
             pair_name = './deepfashion_utils/test.csv'
             self.img_dir = data_dir + 'test/'
+            self.pose_path = data_dir + 'test_densepose/'
         pairs = os.path.join('', pair_name)
         pairs = pd.read_csv(pairs)
         self.img_items = self.process_dir(data_dir, pairs)
@@ -92,103 +93,12 @@ class DeepFashion(Dataset):
             data.append((csv_file.iloc[i]["from"],  csv_file.iloc[i]["to"]))
         return data
 
-    def translate_image_name(self, name):
-        name_ = name[7:]
-        keyword1 = name_.split('MEN')[0] + 'MEN'
-        remaining = name_.split('MEN')[1]
-        keyword2 = remaining.split('id00')[0]
-        remaining = 'id00' + remaining.split('id00')[1]
-        keyword3 = remaining[0:10]
-        keyword3 = keyword3.replace('id', 'id_')
-        keyword4 = remaining[10:]
-        keyword4 = keyword4[0:4] + '_' + keyword4[4:]
-        id = keyword4.split('_')[0]
-        cur_path =  keyword2 + '/' + keyword3 + '/' + keyword4
-        id_path =   keyword2 + '/' + keyword3 + '/' + id
-        # print(id, cur_path)
-        return id_path, cur_path, keyword1
-
     def __len__(self):
         return len(self.img_items)
-    
-    def load_texture_img(self, densepose_condition_path, gender):
-
-        texture_path = self.densepose_dir + gender  + '_texture/'  + densepose_condition_path.split('.')[0] + '.png'
-        
-        texture_origin_image = Image.open(texture_path).resize((512, 512))
-        texture_img = texture_origin_image
-           
-        if not os.path.exists(texture_path):
-            print(texture_path, "not exsit!")
-            raise FileNotFoundError
-        
-        return texture_img, texture_origin_image
 
     def __getitem__(self, index):
-        img_path_from, img_path_to = self.img_items[index]
-        img_gt_ = Image.open(self.img_dir + img_path_to)
-        img_input = Image.open(self.img_dir + img_path_from).resize((512, 512))
-        # texture map: from image input, need id  
-        # densepose : from image gt , need full_name 
-        id_input, densepose_condition_from, gender, = self.translate_image_name(img_path_from)
-        _, densepose_condition, _ = self.translate_image_name(img_path_to)
-        
-        # load densepose
-        densepose_path = self.densepose_dir + gender  + '_densepose/' + densepose_condition.split('.')[0] + '.png'
-        densepose_img = Image.open(densepose_path)
-
-        # load texture 
-        texture_img, texture_origin_image = self.load_texture_img(densepose_condition_from, gender, id_input, origin_img_texture=self.origin_img_texture)
-        texture_img_gt, _ = self.load_texture_img(densepose_condition, gender, id_input)
-        
-        # choose the condition type
-        ref_clip_input = texture_origin_image if self.texture_clip_condition else img_input
-        ref_unet_input = texture_img if self.texture_unet_condition else img_input
-
-        # do transformation
-        img_gt = self.transform(img_gt_.resize((512, 512)))
-        ref_img = self.transform(ref_unet_input)
-        texture_img_gt = self.transform(texture_img_gt)
-        texture_origin_image_ = self.transform(texture_origin_image)
-        img_input_ = self.transform(img_input.resize((512, 512)))
-        pose_image = self.base_transform(densepose_img.resize((512, 512)))
-        if self.use_dino:
-            clip_image = self.dino_preprocess(ref_clip_input)
-        else:
-            clip_image = self.clip_image_processor(images=ref_clip_input, return_tensors="pt").pixel_values[0]
-        origin_clip = self.base_transform(ref_clip_input)
-
-        gt_256 = self.test_256(img_gt_)
-        gt_512 = self.test_512(img_gt_)
-        # for easily locate the image location
-        combined_image_name = img_path_from[:-4] + '_2_' + img_path_to[:-4]
-        
-        sample = dict(
-            image_name=img_path_to,
-            ref_img=ref_img,
-            texture_img_gt=texture_img_gt,
-            origin_texture=texture_origin_image_,
-            img=img_gt,
-            img_input=img_input_,
-            clip_images=clip_image,
-            clip_origin=origin_clip,
-            tgt_pose=pose_image, 
-            gt_256=gt_256,
-            gt_512=gt_512,
-            save_image_name=combined_image_name,   
-        )
-        
-        if self.double_clip:
-            double_clip = img_input if self.texture_clip_condition else texture_origin_image
-            if self.use_dino:
-                clip_image2 = self.dino_preprocess(double_clip)
-            else:
-                clip_image2 = self.clip_image_processor(images=double_clip, return_tensors="pt").pixel_values[0]
-            sample["clip_images2"] = clip_image2
-            origin_clip2 = self.base_transform(double_clip)
-            sample["clip_origin2"] = origin_clip2
-            
-        return sample
+        print("this class is deprecated now.")
+        raise NotImplementedError
 
             
 class DeepFashionBaseline(DeepFashion):
@@ -204,7 +114,6 @@ class DeepFashionBaseline(DeepFashion):
                  double_clip = False,
                  use_face_emb = False,
                  use_dino = False,
-                 use_highres_face_emb = True,
                  ):
         super().__init__(root_dir=root_dir,
                          image_size=image_size,
@@ -218,35 +127,26 @@ class DeepFashionBaseline(DeepFashion):
         self.clip_cond_type = clip_cond_type
         self.aux_cond_dir = os.environ['DATASET_DIR'] + 'deepfashion_sup/'
         self.use_face_emb = use_face_emb
-        self.use_highres_face_emb = use_highres_face_emb
-        if use_highres_face_emb:
-            print("-------------use high res face emb-------------------_!")
 
     
     def __getitem__(self, index):
         img_path_from, img_path_to = self.img_items[index]
-        img_gt_ = Image.open(self.img_dir + img_path_to)
+        img_gt_ = Image.open(self.img_dir + img_path_to)        
         img_input = Image.open(self.img_dir + img_path_from).resize((512, 512))
-        # texture map: from image input, need id  
-        # densepose : from image gt , need full_name 
-        id_input, densepose_condition_from, gender, = self.translate_image_name(img_path_from)
-        
-        _, densepose_condition, _ = self.translate_image_name(img_path_to)
-        
-        base_pose_dir = self.aux_cond_dir + gender  + '/' + densepose_condition.split('.')[0]
+
+        # change the postfix 
+        image_path_from = os.path.splitext(image_path_from) + '.png'
+        image_path_to = os.path.splitext(image_path_to) + '.png'
+
         if self.pose_cond_type == 'dwpose':
-            pose_path = base_pose_dir + '/dwpose/pose.png'
+            raise NotImplementedError
         elif self.pose_cond_type == 'densepose':
-            pose_path = self.densepose_dir + gender  + '_densepose/' + densepose_condition.split('.')[0] + '.png'
+            pose_path = self.pose_path + image_path_to
         else:
             raise NotImplementedError
-        
-        texture_path = self.densepose_dir + gender  + '_texture/'  + densepose_condition_from.split('.')[0] + '.png'
+
+        texture_path = self.densepose_dir.replace('densepose/', 'texture/') + image_path_from
         texture_img = Image.open(texture_path).resize((512, 512))
-               
-        if not os.path.exists(texture_path):
-            print(pose_path, "not exsit!")
-            return 1
 
         pose_img = Image.open(pose_path)
         
@@ -268,6 +168,7 @@ class DeepFashionBaseline(DeepFashion):
 
         gt_256 = self.test_256(img_gt_)
         gt_512 = self.test_512(img_gt_)
+        
         # for easily locate the image location
         combined_image_name = img_path_from[:-4] + '_2_' + img_path_to[:-4]
         
@@ -284,12 +185,8 @@ class DeepFashionBaseline(DeepFashion):
             save_image_name = combined_image_name,
         )
 
-        # add some extra-elements in dict
         if self.use_face_emb:
-            face_emb_name = 'face_emb.npy'
-            if self.use_highres_face_emb:
-                face_emb_name = 'face_emb_highres.npy'
-            face_emb_path = self.aux_cond_dir + gender  + '/' + densepose_condition_from.split('.')[0] + '/face/' + face_emb_name
+            face_emb_path = self.densepose_dir.replace('densepose/', 'face/') + image_path_from.replace('png', 'npy')
             if os.path.exists(face_emb_path):
                 ref_face_emb = np.load(face_emb_path)
                 ref_face_emb = np.expand_dims(ref_face_emb, axis=0)
@@ -310,49 +207,29 @@ class DeepFashionBaseline(DeepFashion):
         return sample
 
 def get_deepfashion_dataset(cfg, **kargs):
-    if cfg.data.pose_type == 'densepose' and cfg.data.clip_type == 'whole_body' and cfg.data.use_face_emb == False:
-        train_dataset = DeepFashion(
-            root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
-            image_size=cfg.data.train_width,
-            texture_clip_condition=cfg.data.texture_clip_condition,
-            texture_unet_condition=cfg.data.texture_unet_condition,
-            if_train=True,
-            **kargs,
-        )
 
-        val_dataset = DeepFashion(
-            root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
-            image_size=cfg.data.train_width,
-            texture_clip_condition=cfg.data.texture_clip_condition,
-            texture_unet_condition=cfg.data.texture_unet_condition,
-            do_normalize=False,
-            if_train=False,
-            **kargs,
-        )
-        
-    else:
-        train_dataset = DeepFashionBaseline(
-            root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
-            image_size=cfg.data.train_width,
-            texture_clip_condition=cfg.data.texture_clip_condition,
-            texture_unet_condition=cfg.data.texture_unet_condition,
-            if_train=True,
-            pose_cond_type=cfg.data.pose_type,
-            clip_cond_type=cfg.data.clip_type,
-            **kargs,
-        )
+    train_dataset = DeepFashionBaseline(
+        root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
+        image_size=cfg.data.train_width,
+        texture_clip_condition=cfg.data.texture_clip_condition,
+        texture_unet_condition=cfg.data.texture_unet_condition,
+        if_train=True,
+        pose_cond_type=cfg.data.pose_type,
+        clip_cond_type=cfg.data.clip_type,
+        **kargs,
+    )
 
-        val_dataset = DeepFashionBaseline(
-            root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
-            image_size=cfg.data.train_width,
-            texture_clip_condition=cfg.data.texture_clip_condition,
-            texture_unet_condition=cfg.data.texture_unet_condition,
-            do_normalize=False,
-            if_train=False,
-            pose_cond_type=cfg.data.pose_type,
-            clip_cond_type=cfg.data.clip_type,
-            **kargs,
-        )
+    val_dataset = DeepFashionBaseline(
+        root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
+        image_size=cfg.data.train_width,
+        texture_clip_condition=cfg.data.texture_clip_condition,
+        texture_unet_condition=cfg.data.texture_unet_condition,
+        do_normalize=False,
+        if_train=False,
+        pose_cond_type=cfg.data.pose_type,
+        clip_cond_type=cfg.data.clip_type,
+        **kargs,
+    )
     return train_dataset, val_dataset
 
 class FidRealDeepFashion(Dataset):

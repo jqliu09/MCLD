@@ -12,6 +12,7 @@ from preprocess_data.texture_interface import convert_texture_inpainting
 from multiprocessing import Pool, Queue
 import multiprocessing as mp
 from functools import partial
+from insightface.app import FaceAnalysis
 
 IMG_EXTENSIONS = [
     '.jpg', '.JPG', '.jpeg', '.JPEG',
@@ -102,14 +103,40 @@ def prepare_texture_mp(image_name):
     else:
         print(f"Failed to process {densepose_name}")
     return True
+
+def prepare_face(image_path, face_save_path, super_resolution=False):
+    face_embedder = FaceAnalysis(name='antelopev2', root='./', providers=['CUDAExecutionProvider', 'CPUExecutionProvider'])
+    face_embedder.prepare(ctx_id=0, det_size=(640, 640))
     
+    if not os.path.exists(face_save_path):
+        os.makedirs(face_save_path)
+    
+    image_names = os.listdir(image_path)
+    print("Processing images to face...")
+    for image_name in tqdm(image_names):
+        image = cv2.imread(image_path + image_name)
+        face_info = face_embedder.get(image)
+        if len(face_info) == 0:
+            print("No face detected in :", image_name)
+            continue
+        face_info = sorted(face_info, key=lambda x:(x['bbox'][2]-x['bbox'][0])*(x['bbox'][3]-x['bbox'][1]))[-1]
+        if super_resolution:
+            # We recommend to do super resolution or bicubic interpolation for small faces, which could slightly improve the overall performance.
+            # "But currently our code do not implement it. 
+            raise NotImplementedError
+        else:
+            face_emb = face_info['embedding']
+            save_name = face_save_path + os.path.splitext(image_name)[0] + '.npy'
+            np.save(save_name, face_emb)
+
 if __name__ == "__main__":
     base_dataset_dir = './dataset/fashion/'
-    # # split the train and test dataset.
-    # make_dataset('./dataset/fashion/', './dataset/fashion/')
+    
+    # split the train and test dataset.
+    make_dataset('./dataset/fashion/', './dataset/fashion/')
     
     
-    # # use Densepose to estimate the poses.
+    # use Densepose to estimate the poses.
     densepose_train_dir = './dataset/fashion/train_densepose/'
     densepose_test_dir = './dataset/fashion/test_densepose/'
     densepose_config_path = "./src/DensePose/config/densepose_rcnn_R_101_FPN_DL_s1x.yaml"
@@ -120,7 +147,7 @@ if __name__ == "__main__":
         densepose_config_path, densepose_model_path)
     
     
-    # parallel process the images to get the texture.
+    # parallel process the images to get the texture map.
     all_names = []
     image_names_train = os.listdir(base_dataset_dir + 'train/')
     image_names_test = os.listdir(base_dataset_dir + 'test/')
@@ -142,4 +169,5 @@ if __name__ == "__main__":
             pass    
     
     # use arcface to estimate the faces.
-    
+    prepare_face(base_dataset_dir + 'train/', base_dataset_dir + 'train_face/')
+    prepare_face(base_dataset_dir + 'test/', base_dataset_dir + 'test_face/')

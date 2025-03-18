@@ -94,12 +94,6 @@ Then, the results can be evaluated by:
 evaluate.py --save_folder FOLDER_TO_SAVE --gt_folder FOLDER_TO_DATASET --resolution 256
 ```
 
-You could also specify your own image and pose by run:
-
-``` bash
-test_single_image.py --input_image YOUR_IMAGE --pose_condition  examples/SELECT_A_POSE
-```
-
 ## Editing
 
 MCLD allows flexible editing since it decompose the human appearance and identities. You could play the editing demo in `editing` folder.
