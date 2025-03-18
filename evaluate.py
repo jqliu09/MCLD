@@ -8,10 +8,10 @@ from torchvision import transforms
 from torchvision.transforms import Resize
 from torchvision.transforms.functional import pil_to_tensor
 import cv2 
-
+import argparse
 from validation.metrics import build_metric
 from src.dataset.deepfashion_dataset import FidRealDeepFashion
-# from insightface.app import FaceAnalysis
+from insightface.app import FaceAnalysis
 
 class AverageMeter:
     def __init__(self):
@@ -177,16 +177,19 @@ def evaluate_face(img_path, gt_path, face_detector):
     print("Face euclidean distance : {}".format(score_distance))
 
 if __name__ == "__main__":
-    gt_path = "./results/diff_mask2/"
-    img_path = "./results/gt/"
-    training_path = "/gpfs/projects/ehpc146/jacky/data/nfs_dataset/fashion/fashion"
     
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--gt_path", type=str, default="./results/gt/")
+    parser.add_argument("--img_path", type=str, default="./results/diff_mask2/")
+    parser.add_argument("--training_path", type=str, default="./dataset/fashion/train/")
+    args = parser.parse_args()
+
     # set the metric for whole image 
     metric = build_metric().to('cuda')
-    evaluate_whole_image(img_path, gt_path, training_path, metric, resolution=256)
-    evaluate_whole_image(img_path, gt_path, training_path, metric, resolution=512)
+    evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=256)
+    evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=512)
     
-    # # set the metric for faces  
-    # face_detector = FaceAnalysis(name='antelopev2', root='./', providers=['CUDAExecutionProvider'])
-    # face_detector.prepare(ctx_id=0, det_size=(512, 352))
-    # evaluate_face(img_path, gt_path, face_detector)
+    # set the metric for faces  
+    face_detector = FaceAnalysis(name='antelopev2', root='./', providers=['CUDAExecutionProvider'])
+    face_detector.prepare(ctx_id=0, det_size=(512, 352))
+    evaluate_face(args.img_path, args.gt_path, face_detector)

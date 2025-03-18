@@ -15,9 +15,19 @@
 
 - Unzip `img_highres.zip`. You will need to ask for password from the [dataset maintainers](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html). Then rename the obtained folder as **img** and put it under the `./dataset/deepfashion` directory. 
 
-- Preprocess the pose condition with [Densepose](). Or you could also download our prepared poses on [pose.zip]().
+- Preprocess dataset by runing `prepare_dataset.py`. This will split the dataset, and prepare the needed conditions such poses, texture maps and face embeddings. You could also download our processed conditions form [Google Drive](). After the preprocessing, you should have your dataset folder organized as follows:
 
-- Preprocess the texture condition and face embedding with `data/prepare_face_texture_data.py`. Also you could download it from our prepared ones on [conditions.zip]().
+```text
+./dataset/fashion/
+|-- train
+|-- train_densepose
+|-- train_texture
+|-- train_face
+|-- test
+|-- test_densepose
+|-- test_texture
+|-- test_face
+```
 
 - Download the train and test split fron [Google Drive](). And put it under `data/split/` folder.
 
@@ -34,7 +44,8 @@ conda env create -f environment.yaml
     - [StableDiffusion V1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5)
     - [sd-vae-ft-mse](https://huggingface.co/stabilityai/sd-vae-ft-mse)
     - [image_encoder](https://huggingface.co/lambdalabs/sd-image-variations-diffusers/tree/main/image_encoder)
-    - [pose_guder]()
+    - [pose_guder](https://huggingface.co/lllyasviel/sd-controlnet-seg)
+    - [densepose_model](https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl)
 
 2. Download our trained checkpoints from [Google drive]().
 
@@ -42,6 +53,7 @@ Finally you will have your pretrained weight as this structure:
 
 ```text
 ./pretrained_weights/
+model_final_844d15.pkl
 |-- control_v11p_sd15_seg
     |-- config.json
     |-- diffusion_pytorch_model.bin
@@ -72,31 +84,33 @@ Finally you will have your pretrained weight as this structure:
 ## Method 
 
 ![method](imgs/main_figure.png)
+The overall pipeline of our proposed Multi-focal Conditioned Diffusion Model. (a) Face regions and appearance regions are first extracted from the source person images; (b) multi-focal condition aggregation module $\phi$ is used to fuse the focal embeddings as $c_{emb}$; (c) ReferenceNet $\mathcal{R}$ is used to aggregate information from the appearance texture map, denoted as $c_{ref}$; (d) Densepose provides the pose control to be fused into UNet with noise by Pose Guider. 
+
 
 ## Training
 
 This code support multi-GPU training with `accelerate`. Full training takes `~26 hours` with 2 A100-80G GPUs with a batch size 12 on deepfashion dataset. 
 
 ```bash
-accelerate launch --main_process_port 12148 train.py --config PATH_TO_CONFIG
+accelerate launch --main_process_port 12148 train.py --config ./configs/train/train.yaml
 ```
 
 ## Validation 
 To test our method on the whole Deepfashion dataset, run:
 
 ``` bash
-test.py --save_folder FOLDER_TO_SAVE
+test.py --save_path FOLDER_TO_SAVE --ckpt_dir ./checkpoints/ --config_path ./configs/train/train.yaml
 ```
 
 Then, the results can be evaluated by:
 
 ``` bash
-evaluate.py --save_folder FOLDER_TO_SAVE --gt_folder FOLDER_TO_DATASET --resolution 256
+evaluate.py --save_path FOLDER_TO_SAVE --gt_folder FOLDER_FOR_GT --training_path ./dataset/fashion/train/
 ```
 
 ## Editing
 
-MCLD allows flexible editing since it decompose the human appearance and identities. You could play the editing demo in `editing` folder.
+MCLD allows flexible editing since it decompose the human appearance and identities. We will release the editing code in the future as soon as it ready.
 
 ![editing](imgs/main_editing.png)
 

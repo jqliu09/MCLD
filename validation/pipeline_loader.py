@@ -76,12 +76,12 @@ class MCLDPipelineLoader(BasePipelineLoader):
         self.to_pil = transforms.ToPILImage()
         self.pipe = None
         
-    def init_model(self, ckpt_dir=None, ckpt_iters=0, pipe_class=Pose2ImagePipeline):    
+    def init_model(self, ckpt_dir=None, pipe_class=Pose2ImagePipeline):    
         if ckpt_dir is not None:
-            self.cfg.denoising_unet_path = ckpt_dir + 'denoising_unet-{}.pth'.format(ckpt_iters)
-            self.cfg.reference_unet_path = ckpt_dir + 'reference_unet-{}.pth'.format(ckpt_iters)
-            self.cfg.pose_guider_path = ckpt_dir + 'pose_guider-{}.pth'.format(ckpt_iters)
-            self.cfg.image_proj_model_path= ckpt_dir + 'image_proj_model-{}.pth'.format(ckpt_iters)
+            self.cfg.denoising_unet_path = ckpt_dir + 'denoising_unet.pth'
+            self.cfg.reference_unet_path = ckpt_dir + 'reference_unet.pth'
+            self.cfg.pose_guider_path = ckpt_dir + 'pose_guider.pth'
+            self.cfg.image_proj_model_path= ckpt_dir + 'image_proj_model.pth'
         # load pretrained weights
         self.denoising_unet.load_state_dict(
             torch.load(self.cfg.denoising_unet_path, map_location="cpu"),
