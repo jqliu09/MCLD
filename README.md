@@ -41,7 +41,7 @@ conda env create -f environment.yaml
 ### Download pretrained Models
 
 1. Download pretrained weight of based models and other components and put it to the pretrained weights: 
-    - [StableDiffusion V1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5)
+    - [StableDiffusion V1.5](https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5)
     - [sd-vae-ft-mse](https://huggingface.co/stabilityai/sd-vae-ft-mse)
     - [image_encoder](https://huggingface.co/lambdalabs/sd-image-variations-diffusers/tree/main/image_encoder)
     - [pose_guder](https://huggingface.co/lllyasviel/sd-controlnet-seg)
