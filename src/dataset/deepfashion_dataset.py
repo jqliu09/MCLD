@@ -125,7 +125,6 @@ class DeepFashionBaseline(DeepFashion):
                          use_dino=use_dino)
         self.pose_cond_type = pose_cond_type
         self.clip_cond_type = clip_cond_type
-        self.aux_cond_dir = os.environ['DATASET_DIR'] + 'deepfashion_sup/'
         self.use_face_emb = use_face_emb
 
     
@@ -209,7 +208,7 @@ class DeepFashionBaseline(DeepFashion):
 def get_deepfashion_dataset(cfg, **kargs):
 
     train_dataset = DeepFashionBaseline(
-        root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
+        root_dir= cfg.data.root_dir,
         image_size=cfg.data.train_width,
         texture_clip_condition=cfg.data.texture_clip_condition,
         texture_unet_condition=cfg.data.texture_unet_condition,
@@ -220,7 +219,7 @@ def get_deepfashion_dataset(cfg, **kargs):
     )
 
     val_dataset = DeepFashionBaseline(
-        root_dir= os.environ['NFS_DIR'] + cfg.data.root_dir,
+        root_dir= cfg.data.root_dir,
         image_size=cfg.data.train_width,
         texture_clip_condition=cfg.data.texture_clip_condition,
         texture_unet_condition=cfg.data.texture_unet_condition,

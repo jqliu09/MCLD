@@ -7,15 +7,15 @@
 ![qualitative](imgs/main_qualitative.png)
 
 ## Generated Results
-   You can directly download our test results from [Google Drive]() (Including 256x176, 512*352 on Deepfashion) for further comparison.
+   You can directly download our test results from [Google Drive](https://drive.google.com/drive/folders/1XweWnWqyey9Cp9Cyq_nUEyAyAM8PBaNA?usp=drive_link) (Including 256x176, 512*352 on Deepfashion) for further comparison.
 
 ## Dataset
 
 - Download `img_highres.zip` of the DeepFashion Dataset from [In-shop Clothes Retrieval Benchmark](https://drive.google.com/drive/folders/0B7EVK8r0v71pYkd5TzBiclMzR00). 
 
-- Unzip `img_highres.zip`. You will need to ask for password from the [dataset maintainers](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html). Then rename the obtained folder as **img** and put it under the `./dataset/deepfashion` directory. 
+- Unzip `img_highres.zip`. You will need to ask for password from the [dataset maintainers](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html). Then unzip it and put it under the `./dataset/deepfashion` directory. 
 
-- Preprocess dataset by runing `prepare_dataset.py`. This will split the dataset, and prepare the needed conditions such poses, texture maps and face embeddings. You could also download our processed conditions form [Google Drive](). After the preprocessing, you should have your dataset folder organized as follows:
+- Preprocess dataset by runing `prepare_dataset.py`. This will split the dataset, and prepare the needed conditions such poses, texture maps and face embeddings. You could also download our processed conditions form [Google Drive](https://drive.google.com/drive/folders/1U5e1eL02b6KIm67LSnHqTjecA7MN57ag?usp=drive_link) and unzip. After the preprocessing, you should have your dataset folder organized as follows:
 
 ```text
 ./dataset/fashion/
@@ -27,9 +27,9 @@
 |-- test_densepose
 |-- test_texture
 |-- test_face
+|-- MEN
+|-- WOMEN
 ```
-
-- Download the train and test split fron [Google Drive](). And put it under `data/split/` folder.
 
 ## Preparation
 
@@ -47,7 +47,7 @@ conda env create -f environment.yaml
     - [pose_guder](https://huggingface.co/lllyasviel/sd-controlnet-seg)
     - [densepose_model](https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl)
 
-2. Download our trained checkpoints from [Google drive]().
+2. Download our trained checkpoints from [Google drive](https://drive.google.com/drive/folders/18643_1GmWWLcKCruKqrfHaecejy-U93x?usp=drive_link).
 
 Finally you will have your pretrained weight as this structure:
 
