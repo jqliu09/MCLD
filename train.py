@@ -50,7 +50,7 @@ logger = get_logger(__name__, log_level="INFO")
 
 def generate_clip_random_noise(bs, device, dtype, scale_factor=0.05):
     values = []
-    std=np.load('./ip_adapter/clip_std.npy')
+    std=np.load('./data/clip_std.npy')
     for _ in range(bs):
         tmp = torch.normal(mean=0, std=torch.tensor(std))
         tmp = tmp.to(device=device, dtype=dtype)

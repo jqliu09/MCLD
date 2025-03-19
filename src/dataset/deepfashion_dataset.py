@@ -48,11 +48,11 @@ class DeepFashion(Dataset):
         self.double_clip = double_clip
         
         if if_train:
-            pair_name = './deepfashion_utils/train.csv'
+            pair_name = './data/train.csv'
             self.img_dir = data_dir + 'train/'
             self.pose_path = data_dir + 'train_densepose/'
         else:
-            pair_name = './deepfashion_utils/test.csv'
+            pair_name = './data/test.csv'
             self.img_dir = data_dir + 'test/'
             self.pose_path = data_dir + 'test_densepose/'
         pairs = os.path.join('', pair_name)
