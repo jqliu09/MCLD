@@ -134,8 +134,8 @@ class DeepFashionBaseline(DeepFashion):
         img_input = Image.open(self.img_dir + img_path_from).resize((512, 512))
 
         # change the postfix 
-        image_path_from = os.path.splitext(image_path_from) + '.png'
-        image_path_to = os.path.splitext(image_path_to) + '.png'
+        image_path_from = os.path.splitext(img_path_from)[0] + '.png'
+        image_path_to = os.path.splitext(img_path_to)[0] + '.png'
 
         if self.pose_cond_type == 'dwpose':
             raise NotImplementedError
@@ -144,7 +144,7 @@ class DeepFashionBaseline(DeepFashion):
         else:
             raise NotImplementedError
 
-        texture_path = self.densepose_dir.replace('densepose/', 'texture/') + image_path_from
+        texture_path = self.pose_path.replace('densepose/', 'texture/') + image_path_from
         texture_img = Image.open(texture_path).resize((512, 512))
 
         pose_img = Image.open(pose_path)
@@ -185,7 +185,7 @@ class DeepFashionBaseline(DeepFashion):
         )
 
         if self.use_face_emb:
-            face_emb_path = self.densepose_dir.replace('densepose/', 'face/') + image_path_from.replace('png', 'npy')
+            face_emb_path = self.pose_path.replace('densepose/', 'face/') + image_path_from.replace('png', 'npy')
             if os.path.exists(face_emb_path):
                 ref_face_emb = np.load(face_emb_path)
                 ref_face_emb = np.expand_dims(ref_face_emb, axis=0)

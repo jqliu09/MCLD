@@ -122,7 +122,7 @@ def evaluate_whole_image(img_path, gt_path, training_path, metric=None, resoluti
     score_psnr = np.mean(psnr_gathered)
     
     # FID computing
-    fid_real_loader = get_fid_loader(training_path)
+    fid_real_loader = get_fid_loader(training_path, resolution=resolution)
     score_fid = compute_fid_deepfashion(fid_real_loader, pred_out_gathered, metric=metric)
     
     print("Evaluation Results on {} resolution:".format(resolution))
@@ -160,19 +160,19 @@ def face_computing(source_image, image, app):
     return cosine, euclidean
 
 def evaluate_face(img_path, gt_path, face_detector):
-    image_names = os.listdir(gt_path + '/512/')
+    image_names = os.listdir(gt_path + '/256/')
     cosine_gathered = []
     eucli_gathered = []
     for idx, image_name in enumerate(tqdm(image_names)):
-        gt = cv2.imread(gt_path + '/512/' + image_name)
-        img = cv2.imread(img_path + '/512/' + image_name)
+        gt = cv2.imread(gt_path + '/256/' + image_name)
+        img = cv2.imread(img_path + '/256/' + image_name)
         cosine, eucli = face_computing(img, gt, app=face_detector)
         if cosine is not None:
             cosine_gathered.append(cosine)
             eucli_gathered.append(eucli)
     score_cos = np.mean(cosine_gathered)
     score_distance = np.mean(eucli_gathered)
-    print("Evaluation Results on faces:")
+    print("Evaluation Results on faces of target images:")
     print("Face cosine similarity: {}".format(score_cos))
     print("Face euclidean distance : {}".format(score_distance))
 
@@ -180,16 +180,16 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument("--gt_path", type=str, default="./results/gt/")
-    parser.add_argument("--img_path", type=str, default="./results/diff_mask2/")
-    parser.add_argument("--training_path", type=str, default="./dataset/fashion/train/")
+    parser.add_argument("--img_path", type=str, default="./results/mcld/")
+    parser.add_argument("--training_path", type=str, default="./dataset/fashion/")
     args = parser.parse_args()
 
     # set the metric for whole image 
-    metric = build_metric().to('cuda')
-    evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=256)
-    evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=512)
+    # metric = build_metric().to('cuda')
+    # evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=256)
+    # evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=512)
     
     # set the metric for faces  
-    face_detector = FaceAnalysis(name='antelopev2', root='./', providers=['CUDAExecutionProvider'])
+    face_detector = FaceAnalysis(name='buffalo_s', root='./', providers=['CUDAExecutionProvider'])
     face_detector.prepare(ctx_id=0, det_size=(512, 352))
     evaluate_face(args.img_path, args.gt_path, face_detector)

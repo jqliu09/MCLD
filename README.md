@@ -47,7 +47,7 @@ conda env create -f environment.yaml
     - [pose_guder](https://huggingface.co/lllyasviel/sd-controlnet-seg)
     - [densepose_model](https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_DL_s1x/165712116/model_final_844d15.pkl)
 
-2. Download our trained checkpoints from [Google drive](https://drive.google.com/drive/folders/18643_1GmWWLcKCruKqrfHaecejy-U93x?usp=drive_link).
+2. Download our trained checkpoints from [Google drive](https://drive.google.com/drive/folders/18643_1GmWWLcKCruKqrfHaecejy-U93x?usp=drive_link) and put it to `./checkpoints` folder.
 
 Finally you will have your pretrained weight as this structure:
 

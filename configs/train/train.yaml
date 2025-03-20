@@ -1,6 +1,6 @@
 data:
-  train_bs: 8
-  val_bs: 8
+  train_bs: 1
+  val_bs: 1
   num_processes: 2
   train_width: 512
   train_height: 512
@@ -8,7 +8,7 @@ data:
     - "./data/fashion_meta.json"
   texture_clip_condition: False
   texture_unet_condition: True
-  root_dir: "fashion/fashion/"
+  root_dir: "dataset/fashion/"
   pose_type: 'densepose'
   clip_type: 'whole_body'
   use_face_emb: True
@@ -45,19 +45,14 @@ noise_scheduler_kwargs:
   steps_offset:        1
   clip_sample:         false
 
-base_model_path: '../animateAnyone/pretrained_weights/sd-image-variations-diffusers'
-vae_model_path: '../animateAnyone/pretrained_weights/sd-vae-ft-mse'
-image_encoder_path: '../animateAnyone/pretrained_weights/sd-image-variations-diffusers/image_encoder'
-controlnet_openpose_path: '../animateAnyone/pretrained_weights/control_v11p_sd15_seg/diffusion_pytorch_model.bin'
+base_model_path: './pretrained_weights/sd-image-variations-diffusers'
+vae_model_path: './pretrained_weights/sd-vae-ft-mse'
+image_encoder_path: './pretrained_weights/sd-image-variations-diffusers/image_encoder'
+controlnet_openpose_path: './pretrained_weights/control_v11p_sd15_seg/diffusion_pytorch_model.bin'
 
 # here for validation
-pretrained_base_model_path: "../animateAnyone/pretrained_weights/stable-diffusion-v1-5/"
-pretrained_vae_path: "../animateAnyone/pretrained_weights/sd-vae-ft-mse"
-# validation_resume_dir: "/mhug/MHUGTmp/jliu/exp_output/thuman_stage1_multi_scale_4"
-validation_resume_dir: "./exp_output/deepfashion_stage1"
-denoising_unet_path: "./exp_output/thuman_stage1_multi_scale_4/denoising_unet-52000.pth"
-reference_unet_path: "./exp_output/thuman_stage1_multi_scale_4/reference_unet-52000.pth"
-pose_guider_path: "./exp_output/thuman_stage1_multi_scale_4/pose_guider-52000.pth"
+pretrained_base_model_path: "./pretrained_weights/stable-diffusion-v1-5/"
+pretrained_vae_path: "./pretrained_weights/sd-vae-ft-mse"
 inference_config: "./configs/inference/inference_v3.yaml"
 
 
@@ -73,7 +68,7 @@ seed: 12580
 resume_from_checkpoint: ''
 checkpointing_steps: 2000
 save_model_epoch_interval: 1
-exp_name: 'deepfashion_stage1_ip_double_clip1026_diff_mask_loss'
-output_dir: '/gpfs/scratch/ehpc146/jacky/mcld/exp_output'
+exp_name: 'mcld'
+output_dir: './exp_output'
 cond_chan: 3
 no_save: False

@@ -1,10 +1,11 @@
 checkpoints/
+pretrained_weights/
 mlruns/
 results/
 metadata/
 exp_output/
 __pycache__/
 .idea/
-./dataset/
+dataset/
 *.pkl
 draft/

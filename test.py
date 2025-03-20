@@ -64,17 +64,17 @@ if __name__ == "__main__":
     dataset_kwargs = {}
     
     # load pipeline
-    cur_pipeloader = MCLDPipelineLoader(args.cfg_path, num_tokens=16, image_proj_model=True)
-    cur_pipeloader.init_model(args.model_path, pipe_class=Pose2ImageIpMultiPipeline)
+    cur_pipeloader = MCLDPipelineLoader(args.config_path, num_tokens=16, image_proj_model=True)
+    cur_pipeloader.init_model(args.ckpt_dir, pipe_class=Pose2ImageIpMultiPipeline)
     infer_func = inference_func
     dataset_kwargs['double_clip'] = True
     dataset_kwargs['use_face_emb'] = True
     
-    cfg = OmegaConf.load(args.cfg_path)
+    cfg = OmegaConf.load(args.config_path)
     _, val_dataset = get_deepfashion_dataset(cfg, **dataset_kwargs)
     
     val_dataloader = torch.utils.data.DataLoader(
        val_dataset, batch_size=8, shuffle=False, num_workers=2, pin_memory=True, drop_last=False
     )
     
-    test(cur_pipeloader, val_dataloader, infer_func=infer_func, save_dir=args.save_dir, exp_name=cfg.exp_name)
+    test(cur_pipeloader, val_dataloader, infer_func=infer_func, save_dir=args.save_path, exp_name=cfg.exp_name)
