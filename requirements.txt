@@ -1,0 +1,7 @@
+accelerate==0.23.0
+diffusers==0.24.0
+eiops==0.4.1
+transformers==4.46.3
+huggingface_hub==0.25.0
+mlflow==2.9.2
+lpips
