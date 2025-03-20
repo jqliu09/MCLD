@@ -185,9 +185,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # set the metric for whole image 
-    # metric = build_metric().to('cuda')
-    # evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=256)
-    # evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=512)
+    metric = build_metric().to('cuda')
+    evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=256)
+    evaluate_whole_image(args.img_path, args.gt_path, args.training_path, metric, resolution=512)
     
     # set the metric for faces  
     face_detector = FaceAnalysis(name='buffalo_s', root='./', providers=['CUDAExecutionProvider'])

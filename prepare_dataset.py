@@ -50,6 +50,8 @@ def make_dataset(dir, save_dir):
     count_train = 0
     count_test = 0
     for root, _, fnames in sorted(os.walk(dir)):
+        if "MEN" not in root:
+            continue
         for fname in fnames:
             if is_image_file(fname):
                 path = os.path.join(root, fname)
@@ -140,7 +142,7 @@ if __name__ == "__main__":
     densepose_train_dir = './dataset/fashion/train_densepose/'
     densepose_test_dir = './dataset/fashion/test_densepose/'
     densepose_config_path = "./src/DensePose/config/densepose_rcnn_R_101_FPN_DL_s1x.yaml"
-    densepose_model_path = "./preprocess_data/model_final_dl_s1x_101.pkl"
+    densepose_model_path = "./pretrained_weights/model_final_844d15.pkl"
     prepare_pose(base_dataset_dir + 'train/', densepose_train_dir, \
          densepose_config_path, densepose_model_path)
     prepare_pose(base_dataset_dir + 'test/', densepose_test_dir, \
@@ -151,8 +153,8 @@ if __name__ == "__main__":
     all_names = []
     image_names_train = os.listdir(base_dataset_dir + 'train/')
     image_names_test = os.listdir(base_dataset_dir + 'test/')
-    all_names.extend(list(densepose_train_dir + name for name in image_names_train))
-    all_names.extend(list(densepose_test_dir + name for name in image_names_test))
+    all_names.extend(list(base_dataset_dir + 'train/' + name for name in image_names_train))
+    all_names.extend(list(base_dataset_dir + 'test/'+ name for name in image_names_test))
     os.makedirs(base_dataset_dir + 'train_texture/', exist_ok=True)
     os.makedirs(base_dataset_dir + 'test_texture/', exist_ok=True)
     
