@@ -37,7 +37,7 @@
 
 ### Install Environment
 ```
-pip install -r requirements.py
+pip install -r requirements.txt
 ```
 ### Download pretrained Models
 
