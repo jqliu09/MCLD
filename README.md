@@ -15,7 +15,7 @@
 
 - Unzip `img_highres.zip`. You will need to ask for password from the [dataset maintainers](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html). Then unzip it and put it under the `./dataset/deepfashion` directory. 
 
-- Preprocess dataset by runing `prepare_dataset.py`. This will split the dataset, and prepare the needed conditions such poses, texture maps and face embeddings. [detectron2](https://detectron2.readthedocs.io/en/latest/tutorials/install.html) need to dinstall for Densepose. The whole preprocessing time requires ~ 8h. You could also download our processed conditions form [Google Drive](https://drive.google.com/drive/folders/1U5e1eL02b6KIm67LSnHqTjecA7MN57ag?usp=drive_link) and unzip. 
+- Preprocess dataset by runing `prepare_dataset.py`. This will split the dataset, and prepare the needed conditions such poses, texture maps and face embeddings. You need pip install [detectron2](https://detectron2.readthedocs.io/en/latest/tutorials/install.html) for Densepose. The whole preprocessing time requires ~ 8h. You could also download our processed conditions form [Google Drive](https://drive.google.com/drive/folders/1U5e1eL02b6KIm67LSnHqTjecA7MN57ag?usp=drive_link) and unzip. 
 
 - After the preprocessing, you should have your dataset folder organized as follows:
 
