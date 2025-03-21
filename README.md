@@ -13,7 +13,7 @@
 
 - Download `img_highres.zip` of the DeepFashion Dataset from [In-shop Clothes Retrieval Benchmark](https://drive.google.com/drive/folders/0B7EVK8r0v71pYkd5TzBiclMzR00). 
 
-- Unzip `img_highres.zip`. You will need to ask for password from the [dataset maintainers](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html). Then unzip it and put it under the `./dataset/deepfashion` directory. 
+- Unzip `img_highres.zip`. You will need to ask for password from the [dataset maintainers](http://mmlab.ie.cuhk.edu.hk/projects/DeepFashion/InShopRetrieval.html). Then unzip it and put it under the `./dataset/fashion` directory. 
 
 - Preprocess dataset by runing `prepare_dataset.py`. This will split the dataset, and prepare the needed conditions such poses, texture maps and face embeddings. You need pip install [detectron2](https://detectron2.readthedocs.io/en/latest/tutorials/install.html) for Densepose. The whole preprocessing time requires ~ 8h. You could also download our processed conditions form [Google Drive](https://drive.google.com/drive/folders/1U5e1eL02b6KIm67LSnHqTjecA7MN57ag?usp=drive_link) and unzip. 
 
@@ -36,9 +36,8 @@
 ## Preparation
 
 ### Install Environment
-
 ```
-conda env create -f environment.yaml
+pip install -r requirements.py
 ```
 ### Download pretrained Models
 
@@ -112,7 +111,7 @@ evaluate.py --save_path FOLDER_TO_SAVE --gt_folder FOLDER_FOR_GT --training_path
 
 ## Editing
 
-MCLD allows flexible editing since it decompose the human appearance and identities. We will release the editing code in the future as soon as it ready.
+MCLD allows flexible editing since it decompose the human appearance and identities. We will release the editing code in the future as soon as it is ready.
 
 ![editing](imgs/main_editing.png)
 
