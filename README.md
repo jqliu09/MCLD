@@ -120,7 +120,7 @@ MCLD allows flexible editing since it decompose the human appearance and identit
 ```bibtex
 @misc{liu2025multifocalconditionedlatentdiffusion,
       title={Multi-focal Conditioned Latent Diffusion for Person Image Synthesis}, 
-      author={Jiaqi Liu and Jichao Zahng and Paolo Rota and Nicu Sebe},
+      author={Jiaqi Liu and Jichao Zhang and Paolo Rota and Nicu Sebe},
       year={2025},
       eprint={2503.15686},
       archivePrefix={arXiv},
