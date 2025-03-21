@@ -1,6 +1,6 @@
 data:
-  train_bs: 1
-  val_bs: 1
+  train_bs: 12
+  val_bs: 8
   num_processes: 2
   train_width: 512
   train_height: 512

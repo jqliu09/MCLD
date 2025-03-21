@@ -238,7 +238,7 @@ def log_validation(
         image_out.paste(ref_image_pil, (0, 0))
         image_out.paste(pose_image_pil, (512, 0))
         image_out.paste(input_image_pil, (512 * 2, 0))
-        image_out.save("test_1.png")
+        # image_out.save("test_1.png")
         
         clip_image_pil = to_pil(batch['clip_origin'][jdx])
         clip_image_pil2 = to_pil(batch['clip_origin2'][jdx])
