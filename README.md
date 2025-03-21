@@ -1,4 +1,4 @@
-# MCLD [![arXiv](https://img.shields.io/badge/arXiv-2402.18078-b31b1b.svg)](https://arxiv.org/abs/2402.18078)
+# MCLD [![arXiv]()]()
 
 > **Multi-focal Conditioned Latent Diffusion for Person Image Synthesis** <br>
 > _Jiaqi Liu, Jichao Zhang, Paolo Rota, Nicu Sebe_<br>
